@@ -192,3 +192,33 @@ sample json
 }   
     
 ```
+
+### google map
+
+- https://console.cloud.google.com/google/maps-apis/api-list?hl=ko&project=potent-hue-321909
+- Maps SDK for Android 추가
+
+```
+Last login: Thu Jul 29 20:00:39 on console
+isangsu@iMac ~ % keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+별칭 이름: androiddebugkey
+생성 날짜: 2021. 6. 3.
+항목 유형: PrivateKeyEntry
+인증서 체인 길이: 1
+인증서[1]:
+소유자: C=US, O=Android, CN=Android Debug
+발행자: C=US, O=Android, CN=Android Debug
+일련 번호: 1
+적합한 시작 날짜: Thu Jun 03 10:47:52 KST 2021 종료 날짜: Sat May 27 10:47:52 KST 2051
+인증서 지문:
+	 SHA1: 40:CF:A6:4A:14:35:39:E5:B2:25:B3:1A:E3:32:F9:B1:46:8E:E2:0D
+	 SHA256: 3F:E1:B0:4E:94:D6:57:96:BA:DC:B5:E8:FD:6A:B2:75:CC:F7:FF:DF:2B:B7:39:36:64:B5:3C:CA:3B:3B:9F:26
+서명 알고리즘 이름: SHA1withRSA(약함)
+주체 공용 키 알고리즘: 2048비트 RSA 키
+버전: 1
+
+Warning:
+인증서 uses the SHA1withRSA signature algorithm which is considered a security risk. This algorithm will be disabled in a future update.
+isangsu@iMac ~ % 
+isangsu@iMac ~ % 
+```
