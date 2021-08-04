@@ -1,10 +1,13 @@
 package com.lilcode.aop.p4c03.googlemap
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.core.view.isVisible
 import com.lilcode.aop.p4c03.googlemap.databinding.ActivityMainBinding
+import com.lilcode.aop.p4c03.googlemap.model.LocationLatLngEntity
+import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
 
 class MainActivity : AppCompatActivity() {
     lateinit var binding: ActivityMainBinding
@@ -18,13 +21,12 @@ class MainActivity : AppCompatActivity() {
 
         initAdapter()
         initViews()
-
+        initData()
+        setData()
     }
 
     private fun initAdapter() {
-        adapter = SearchRecyclerAdapter{
-            Toast.makeText(this, "아이템 클릭", Toast.LENGTH_SHORT).show()
-        }
+        adapter = SearchRecyclerAdapter()
     }
 
     /*
@@ -35,4 +37,29 @@ class MainActivity : AppCompatActivity() {
         recyclerView.adapter = adapter
 
     }
+
+    @SuppressLint("NotifyDataSetChanged")
+    private fun initData(){
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun setData(){
+        // mocking data
+        val dataList = (0..10).map {
+            SearchResultEntity(
+                name = "빌딩 $it",
+                fullAddress = "주소 $it",
+                locationLatLng = LocationLatLngEntity(
+                    it.toFloat(),
+                    it.toFloat()
+                )
+            )
+        }
+        adapter.setSearchResultList(dataList){
+            Toast.makeText(this, "빌딩이름 : ${it.name}, 주소 : ${it.fullAddress}", Toast.LENGTH_SHORT)
+                .show()
+        }
+    }
+
+
 }

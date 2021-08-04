@@ -4,18 +4,21 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lilcode.aop.p4c03.googlemap.databinding.ViewholderSearchResultItemBinding
+import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
 
-class SearchRecyclerAdapter(private val searchResultClickListener: (Any) -> Unit): RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultViewHolder>() {
+class SearchRecyclerAdapter: RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultViewHolder>() {
 
-    private var searchResultList: List<Any> = List(10){it}
+    private var searchResultList: List<SearchResultEntity> = listOf()
 
-    inner class SearchResultViewHolder(private val binding: ViewholderSearchResultItemBinding, private val searchResultClickListener: (Any)-> Unit): RecyclerView.ViewHolder(binding.root){
-        fun bindData(data: Any) = with(binding){
-            titleTextView.text = "제목"
-            subtitleTextView.text = "부제"
+    private lateinit var searchResultClickListener: (SearchResultEntity) -> Unit
+
+    inner class SearchResultViewHolder(private val binding: ViewholderSearchResultItemBinding, private val searchResultClickListener: (SearchResultEntity)-> Unit): RecyclerView.ViewHolder(binding.root){
+        fun bindData(data: SearchResultEntity) = with(binding){
+            titleTextView.text = data.name
+            subtitleTextView.text = data.fullAddress
         }
 
-        fun bindViews(data: Any){
+        fun bindViews(data: SearchResultEntity){
             binding.root.setOnClickListener {
                 searchResultClickListener(data)
             }
@@ -35,5 +38,11 @@ class SearchRecyclerAdapter(private val searchResultClickListener: (Any) -> Unit
     override fun getItemCount(): Int {
         return searchResultList.size
     }
+
+    fun setSearchResultList(searchResultList: List<SearchResultEntity>, searchResultClickListener: (SearchResultEntity) -> Unit){
+        this.searchResultList = searchResultList
+        this.searchResultClickListener = searchResultClickListener
+    }
+
 
 }
