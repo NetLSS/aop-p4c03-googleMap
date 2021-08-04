@@ -17,7 +17,7 @@ object RetrofitUtil {
         return Retrofit.Builder()
             .baseUrl(Url.TMAP_URL)
             .addConverterFactory(GsonConverterFactory.create()) // gson으로 파싱
-            .client(buildOkHttpClient())
+            .client(buildOkHttpClient()) // OkHttp 사용
             .build()
     }
 
