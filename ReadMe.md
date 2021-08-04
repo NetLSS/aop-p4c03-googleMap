@@ -37,3 +37,158 @@ API 연결을 위한 okhttp3, retrofit2 라이브러리
 4. 추가 기능 구현
 
 
+### POI
+
+- 티맵 라이브러리 POI api 사용해볼것
+- 배민에서 사용
+- https://openapi.sk.com/api/detailView
+- T map API 바로구매
+- https://openapi.sk.com/myproject/apiConsole?pjtSeq=1000027886&ordSeq=33324&gdsSeq=1
+- https://tmapapi.sktelecom.com/main.html#webservice/docs/tmapPoiSearch
+
+sample json
+```json
+{
+  "searchPoiInfo": {
+    "totalCount": "65",
+    "count": "2",
+    "page": "1",
+    "pois": {
+      "poi": [
+        {
+          "id": "4670161",
+          "pkey": "37446900",
+          "navSeq": "0",
+          "collectionType": "poi",
+          "name": "빈스빈스마포공덕점",
+          "telNo": "",
+          "frontLat": "37.543956",
+          "frontLon": "126.950107",
+          "noorLat": "37.543872",
+          "noorLon": "126.950052",
+          "upperAddrName": "서울",
+          "middleAddrName": "마포구",
+          "lowerAddrName": "공덕동",
+          "detailAddrname": "",
+          "mlClass": "1",
+          "lowerAddrName": "공덕동",
+          "firstNo": "461",
+          "secondNo": "",
+          "roadName": "",
+          "firstBuildNo": "",
+          "secondBuildNo": "",
+          "radius": "0",
+          "upperBizName": "생활편의",
+          "middleBizName": "술집",
+          "lowerBizName": "바",
+          "detailBizName": "기타",
+          "rpFlag": "16",
+          "groupSubLists":{
+            "groupSub":[
+              {
+                "subPkey": "113344401",
+                "subSeq": "1",
+                "subName": "1번출구",
+                "subCenterY": "37.55628772",
+                "subCenterX": "126.92272084",
+                "subNavY": "37.55628772",
+                "subNavX": "126.92272084",
+                "subRpFlag": "8",
+                "subPoiId": "1133444",
+                "subNavSeq": "1",
+                "subParkYn": "0",
+                "subClassCd": "01012804",
+                "subClassNmA": "교통편의",
+                "subClassNmB": "교통시설",
+                "subClassNmC": "지하철출구번호",
+                "subClassNmD": "2호선"
+              }
+            ]
+          },
+          "newAddressList":{
+            "newAddress":[
+              {
+                "centerLat": "37.54387299",
+                "centerLon": "126.95007981",
+                "frontLat": "37.54395631",
+                "frontLon": "126.95013536",
+                "roadName": "백범로",
+                "bldNo1": "178",
+                "bldNo2": "",
+                "roadId": "00232",
+                "fullAddressRoad": "서울 마포구 백범로 178"
+              }
+            ]
+          }
+        },
+        {
+          "id": "4778454",
+          "pkey": "191276601",
+          "navSeq": "1",
+          "collectionType": "poi",
+          "name": "티롤",
+          "frontLat": "37.544289",
+          "frontLon": "126.949635",
+          "noorLat": "37.544261",
+          "noorLon": "126.949607",
+          "upperAddrName": "서울",
+          "middleAddrName": "마포구",
+          "lowerAddrName": "공덕동",
+          "detailAddrname": "",
+          "mlClass": "1",
+          "lowerAddrName": "공덕동",
+          "firstNo": "461",
+          "secondNo": "",
+          "roadName": "",
+          "firstBuildNo": "",
+          "secondBuildNo": "",
+          "radius": "0.06",
+          "upperBizName": "생활편의",
+          "middleBizName": "술집",
+          "lowerBizName": "바",
+          "detailBizName": "기타",
+          "rpFlag": "16",
+          "groupSubLists":{
+            "groupSub":[
+              {
+                "subPkey": "113344401",
+                "subSeq": "1",
+                "subName": "1번출구",
+                "subCenterY": "37.55628772",
+                "subCenterX": "126.92272084",
+                "subNavY": "37.55628772",
+                "subNavX": "126.92272084",
+                "subRpFlag": "8",
+                "subPoiId": "1133444",
+                "subNavSeq": "1",
+                "subParkYn": "0",
+                "subClassCd": "01012804",
+                "subClassNmA": "교통편의",
+                "subClassNmB": "교통시설",
+                "subClassNmC": "지하철출구번호",
+                "subClassNmD": "2호선"
+              }
+            ]
+          },
+          "newAddressList":{
+            "newAddress":[
+              {
+                "centerLat": "37.54387299",
+                "centerLon": "126.95007981",
+                "frontLat": "37.54395631",
+                "frontLon": "126.95013536",
+                "roadName": "백범로",
+                "bldNo1": "178",
+                "bldNo2": "",
+                "roadId": "00232",
+                "fullAddressRoad": "서울 마포구 백범로 178"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}   
+    
+```
