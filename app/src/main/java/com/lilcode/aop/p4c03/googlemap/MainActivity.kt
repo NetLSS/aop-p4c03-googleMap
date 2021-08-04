@@ -44,7 +44,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         adapter = SearchRecyclerAdapter()
     }
 
-    private fun bindViews() = with(binding){
+    private fun bindViews() = with(binding) {
         searchButton.setOnClickListener {
             searchKeyword(searchBarInputView.text.toString())
         }
@@ -53,14 +53,14 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     /*
     `with` scope function 사용
      */
-    private fun initViews() = with(binding){
+    private fun initViews() = with(binding) {
         emptyResultTextView.isVisible = false
         recyclerView.adapter = adapter
 
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun initData(){
+    private fun initData() {
         adapter.notifyDataSetChanged()
     }
 
@@ -76,26 +76,30 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 )
             )
         }
-        adapter.setSearchResultList(dataList){
-            Toast.makeText(this, "빌딩이름 : ${it.name}, 주소 : ${it.fullAddress} 위도/경도 : ${it.locationLatLng}", Toast.LENGTH_SHORT)
+        adapter.setSearchResultList(dataList) {
+            Toast.makeText(
+                this,
+                "빌딩이름 : ${it.name}, 주소 : ${it.fullAddress} 위도/경도 : ${it.locationLatLng}",
+                Toast.LENGTH_SHORT
+            )
                 .show()
             startActivity(Intent(this, MapActivity::class.java))
         }
     }
 
-    private fun searchKeyword(keywordString: String){
+    private fun searchKeyword(keywordString: String) {
         // 비동기 처리
         launch(coroutineContext) {
-            try{
+            try {
                 // IO 스레드 사용
-                withContext(Dispatchers.IO){
+                withContext(Dispatchers.IO) {
                     val response = RetrofitUtil.apiService.getSearchLocation(
                         keyword = keywordString
                     )
-                    if (response.isSuccessful){
+                    if (response.isSuccessful) {
                         val body = response.body()
                         // Main (UI) 스레드 사용
-                        withContext(Dispatchers.Main){
+                        withContext(Dispatchers.Main) {
                             Log.e("response LSS", body.toString())
                             body?.let { searchResponse ->
                                 setData(searchResponse.searchPoiInfo.pois)
@@ -103,7 +107,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                         }
                     }
                 }
-            } catch (e: Exception){
+            } catch (e: Exception) {
                 e.printStackTrace() // Permission denied (missing INTERNET permission?) 인터넷 권한 필요
                 // 또는 앱 삭제 후 재설치
             }

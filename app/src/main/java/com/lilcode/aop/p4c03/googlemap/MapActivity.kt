@@ -21,7 +21,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
     }
 
     private fun setupGoogleMap() {
-        val mapFragment = supportFragmentManager.findFragmentById(binding.mapFragment.id) as SupportMapFragment
+        val mapFragment =
+            supportFragmentManager.findFragmentById(binding.mapFragment.id) as SupportMapFragment
         mapFragment.getMapAsync(this)
     }
 
