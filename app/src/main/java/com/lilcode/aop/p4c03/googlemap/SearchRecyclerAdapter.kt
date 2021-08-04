@@ -1,24 +1,28 @@
 package com.lilcode.aop.p4c03.googlemap
 
+import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.lilcode.aop.p4c03.googlemap.databinding.ViewholderSearchResultItemBinding
 import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
 
-class SearchRecyclerAdapter: RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultViewHolder>() {
+class SearchRecyclerAdapter : RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultViewHolder>() {
 
     private var searchResultList: List<SearchResultEntity> = listOf()
 
     private lateinit var searchResultClickListener: (SearchResultEntity) -> Unit
 
-    inner class SearchResultViewHolder(private val binding: ViewholderSearchResultItemBinding, private val searchResultClickListener: (SearchResultEntity)-> Unit): RecyclerView.ViewHolder(binding.root){
-        fun bindData(data: SearchResultEntity) = with(binding){
+    inner class SearchResultViewHolder(
+        private val binding: ViewholderSearchResultItemBinding,
+        private val searchResultClickListener: (SearchResultEntity) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bindData(data: SearchResultEntity) = with(binding) {
             titleTextView.text = data.name
             subtitleTextView.text = data.fullAddress
         }
 
-        fun bindViews(data: SearchResultEntity){
+        fun bindViews(data: SearchResultEntity) {
             binding.root.setOnClickListener {
                 searchResultClickListener(data)
             }
@@ -26,7 +30,11 @@ class SearchRecyclerAdapter: RecyclerView.Adapter<SearchRecyclerAdapter.SearchRe
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchResultViewHolder {
-        val binding = ViewholderSearchResultItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding = ViewholderSearchResultItemBinding.inflate(
+            LayoutInflater.from(parent.context),
+            parent,
+            false
+        )
         return SearchResultViewHolder(binding, searchResultClickListener)
     }
 
@@ -39,9 +47,14 @@ class SearchRecyclerAdapter: RecyclerView.Adapter<SearchRecyclerAdapter.SearchRe
         return searchResultList.size
     }
 
-    fun setSearchResultList(searchResultList: List<SearchResultEntity>, searchResultClickListener: (SearchResultEntity) -> Unit){
+    @SuppressLint("NotifyDataSetChanged")
+    fun setSearchResultList(
+        searchResultList: List<SearchResultEntity>,
+        searchResultClickListener: (SearchResultEntity) -> Unit
+    ) {
         this.searchResultList = searchResultList
         this.searchResultClickListener = searchResultClickListener
+        notifyDataSetChanged()
     }
 
 
