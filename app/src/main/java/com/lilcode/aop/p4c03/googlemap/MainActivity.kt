@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
 
     // TODO : 무한 스크롤
     // TODO : 현재 위치 받는 속도가 너무 느린데? API 문제인가
+    // TODO : 현위치 버튼 광클 할 때 처리(?)
 
     private lateinit var job: Job
 
