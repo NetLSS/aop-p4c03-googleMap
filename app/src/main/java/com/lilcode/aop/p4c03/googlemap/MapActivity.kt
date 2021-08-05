@@ -125,7 +125,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         // GPS 이용 가능한지
         val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
-        // 권한 얻기
+        // 권한 얻기 // TODO: 교육욕 팝업
         if (isGpsEnable) {
             if (ContextCompat.checkSelfPermission(
                     this,

@@ -16,7 +16,8 @@ interface ApiService {
         @Header("appKey") appKey: String = Key.TMAP_API,
         @Query("version") version: Int = 1,
         @Query("callback") callback: String? = null,
-        @Query("count") count: Int = 20, // 한페이지에 얼마나 나타낼 지
+        @Query("page") page: Int = 1,
+        @Query("count") count: Int = 50, // 한페이지에 얼마나 나타낼 지
         @Query("searchKeyword") keyword: String, // 검색어
         @Query("areaLLCode") areaLLCode: String? = null,
         @Query("areaLMCode") areaLMCode: String? = null,

@@ -24,6 +24,9 @@ import android.view.inputmethod.InputMethodManager
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
+    // TODO : 무한 스크롤
+    // TODO : 현재 위치 받는 속도가 너무 느린데? API 문제인가
+
     private lateinit var job: Job
 
     override val coroutineContext: CoroutineContext
