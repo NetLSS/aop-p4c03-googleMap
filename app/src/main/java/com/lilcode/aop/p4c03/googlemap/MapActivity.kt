@@ -71,13 +71,12 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         bindViews()
     }
 
-    private fun bindViews() = with(binding){
+    private fun bindViews() = with(binding) {
         // 현재 위치 버튼 리스너
         currentLocationButton.setOnClickListener {
             getMyLocation()
         }
     }
-
 
 
     private fun setupGoogleMap() {
@@ -119,7 +118,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
 
     private fun getMyLocation() {
         // 위치 매니저 초기화
-        if(::locationManager.isInitialized.not()){
+        if (::locationManager.isInitialized.not()) {
             locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         }
 
@@ -127,11 +126,11 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
         // 권한 얻기
-        if(isGpsEnable) {
+        if (isGpsEnable) {
             if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED
@@ -156,7 +155,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         val minDistance = 100f // 최소 거리 허용
 
         // 로케이션 리스너 초기화
-        if(::myLocationListener.isInitialized.not()) {
+        if (::myLocationListener.isInitialized.not()) {
             myLocationListener = MyLocationListener()
         }
 
@@ -178,11 +177,14 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
     }
 
     private fun onCurrentLocationChanged(locationLatLngEntity: LocationLatLngEntity) {
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-            LatLng(
-                locationLatLngEntity.latitude.toDouble(),
-                locationLatLngEntity.longitude.toDouble()
-        ), CAMERA_ZOOM_LEVEL))
+        map.moveCamera(
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng(
+                    locationLatLngEntity.latitude.toDouble(),
+                    locationLatLngEntity.longitude.toDouble()
+                ), CAMERA_ZOOM_LEVEL
+            )
+        )
 
         loadReverseGeoInformation(locationLatLngEntity)
         removeLocationListener() // 위치 불러온 경우 더이상 리스너가 필요 없으므로 제거
@@ -195,7 +197,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
                 // IO 스레드에서 위치 정보를 받아옴
                 withContext(Dispatchers.IO) {
                     val response = RetrofitUtil.apiService.getReverseGeoCode(
-                        lat =  locationLatLngEntity.latitude.toDouble(),
+                        lat = locationLatLngEntity.latitude.toDouble(),
                         lon = locationLatLngEntity.longitude.toDouble()
                     )
                     if (response.isSuccessful) {
@@ -205,11 +207,13 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
                         withContext(Dispatchers.Main) {
                             Log.e("list", body.toString())
                             body?.let {
-                               currentSelectMarker = setupMarker(SearchResultEntity(
-                                    fullAddress = it.addressInfo.fullAddress ?: "주소 정보 없음",
-                                    name ="내 위치",
-                                    locationLatLng = locationLatLngEntity
-                                ))
+                                currentSelectMarker = setupMarker(
+                                    SearchResultEntity(
+                                        fullAddress = it.addressInfo.fullAddress ?: "주소 정보 없음",
+                                        name = "내 위치",
+                                        locationLatLng = locationLatLngEntity
+                                    )
+                                )
                                 // 마커 보여주기
                                 currentSelectMarker?.showInfoWindow()
                             }
@@ -238,7 +242,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             PERMISSION_REQUEST_CODE -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED &&grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                     setMyLocationListener()
                 } else {
                     Toast.makeText(this, "권한을 받지 못했습니다.", Toast.LENGTH_SHORT).show()
@@ -247,7 +251,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         }
     }
 
-    inner class MyLocationListener: LocationListener {
+    inner class MyLocationListener : LocationListener {
         override fun onLocationChanged(location: Location) {
             // 현재 위치 콜백
             val locationLatLngEntity = LocationLatLngEntity(

@@ -22,8 +22,6 @@ import android.app.Activity
 import android.view.inputmethod.InputMethodManager
 
 
-
-
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
     private lateinit var job: Job
@@ -79,7 +77,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun hideKeyboard() {
-        if(::inputMethodManager.isInitialized.not()){
+        if (::inputMethodManager.isInitialized.not()) {
             inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         }
         inputMethodManager.hideSoftInputFromWindow(binding.searchBarInputView.windowToken, 0)
