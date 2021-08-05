@@ -101,7 +101,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 super.onScrolled(recyclerView, dx, dy)
                 recyclerView.adapter ?: return
 
-                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                val lastVisibleItemPosition =
+                    (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
                 val totalItemCount = recyclerView.adapter!!.itemCount - 1
 
                 // 페이지 끝에 도달한 경우
@@ -117,38 +118,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         if (binding.recyclerView.adapter?.itemCount == 0)
             return
 
-        launch(coroutineContext) {
-            launch(coroutineContext) {
-                try {
-                    binding.progressCircular.isVisible = true // 로딩 표시
-
-                    // IO 스레드 사용
-                    withContext(Dispatchers.IO) {
-                        val response = RetrofitUtil.apiService.getSearchLocation(
-                            keyword = adapter.currentSearchString,
-                            page = adapter.currentPage + 1
-                        )
-                        if (response.isSuccessful) {
-                            val body = response.body()
-                            // Main (UI) 스레드 사용
-                            withContext(Dispatchers.Main) {
-                                Log.e("response LSS", body.toString())
-                                body?.let { searchResponse ->
-                                    setData(searchResponse.searchPoiInfo, adapter.currentSearchString)
-                                }
-                            }
-                        }
-                    }
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    // error 해결 방법
-                    // Permission denied (missing INTERNET permission?) 인터넷 권한 필요
-                    // 또는 앱 삭제 후 재설치
-                } finally {
-                    binding.progressCircular.isVisible = false // 로딩 표시 완료
-                }
-            }
-        }
+        searchWithPage(adapter.currentSearchString, adapter.currentPage + 1)
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -188,15 +158,22 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     }
 
     private fun searchKeyword(keywordString: String) {
+        searchWithPage(keywordString, 1)
+    }
+
+    private fun searchWithPage(keywordString: String, page: Int) {
         // 비동기 처리
         launch(coroutineContext) {
             try {
                 binding.progressCircular.isVisible = true // 로딩 표시
-                adapter.clearList()
+                if (page == 1) {
+                    adapter.clearList()
+                }
                 // IO 스레드 사용
                 withContext(Dispatchers.IO) {
                     val response = RetrofitUtil.apiService.getSearchLocation(
-                        keyword = keywordString
+                        keyword = keywordString,
+                        page = page
                     )
                     if (response.isSuccessful) {
                         val body = response.body()
