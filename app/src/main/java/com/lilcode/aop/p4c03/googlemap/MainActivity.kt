@@ -17,14 +17,16 @@ import com.lilcode.aop.p4c03.googlemap.response.search.Pois
 import com.lilcode.aop.p4c03.googlemap.utility.RetrofitUtil
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-import android.app.Activity
 
 import android.view.inputmethod.InputMethodManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.lilcode.aop.p4c03.googlemap.response.search.SearchPoiInfo
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
 
-    // TODO : 무한 스크롤
     // TODO : 현재 위치 받는 속도가 너무 느린데? API 문제인가
     // TODO : 현위치 버튼 광클 할 때 처리(?)
 
@@ -94,6 +96,59 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         emptyResultTextView.isVisible = false
         recyclerView.adapter = adapter
 
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                recyclerView.adapter ?: return
+
+                val lastVisibleItemPosition = (recyclerView.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+                val totalItemCount = recyclerView.adapter!!.itemCount - 1
+
+                // 페이지 끝에 도달한 경우
+                if (!recyclerView.canScrollVertically(1) && lastVisibleItemPosition == totalItemCount) {
+                    loadNext()
+
+                }
+            }
+        })
+    }
+
+    private fun loadNext() {
+        if (binding.recyclerView.adapter?.itemCount == 0)
+            return
+
+        launch(coroutineContext) {
+            launch(coroutineContext) {
+                try {
+                    binding.progressCircular.isVisible = true // 로딩 표시
+
+                    // IO 스레드 사용
+                    withContext(Dispatchers.IO) {
+                        val response = RetrofitUtil.apiService.getSearchLocation(
+                            keyword = adapter.currentSearchString,
+                            page = adapter.currentPage + 1
+                        )
+                        if (response.isSuccessful) {
+                            val body = response.body()
+                            // Main (UI) 스레드 사용
+                            withContext(Dispatchers.Main) {
+                                Log.e("response LSS", body.toString())
+                                body?.let { searchResponse ->
+                                    setData(searchResponse.searchPoiInfo, adapter.currentSearchString)
+                                }
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    // error 해결 방법
+                    // Permission denied (missing INTERNET permission?) 인터넷 권한 필요
+                    // 또는 앱 삭제 후 재설치
+                } finally {
+                    binding.progressCircular.isVisible = false // 로딩 표시 완료
+                }
+            }
+        }
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -101,7 +156,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         adapter.notifyDataSetChanged()
     }
 
-    private fun setData(pois: Pois) {
+    private fun setData(searchInfo: SearchPoiInfo, keywordString: String) {
+
+        val pois: Pois = searchInfo.pois
         // mocking data
         val dataList = pois.poi.map {
             SearchResultEntity(
@@ -126,6 +183,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 putExtra(SEARCH_RESULT_EXTRA_KEY, it)
             })
         }
+        adapter.currentPage = searchInfo.page.toInt()
+        adapter.currentSearchString = keywordString
     }
 
     private fun searchKeyword(keywordString: String) {
@@ -133,7 +192,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         launch(coroutineContext) {
             try {
                 binding.progressCircular.isVisible = true // 로딩 표시
-
+                adapter.clearList()
                 // IO 스레드 사용
                 withContext(Dispatchers.IO) {
                     val response = RetrofitUtil.apiService.getSearchLocation(
@@ -145,7 +204,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                         withContext(Dispatchers.Main) {
                             Log.e("response LSS", body.toString())
                             body?.let { searchResponse ->
-                                setData(searchResponse.searchPoiInfo.pois)
+                                setData(searchResponse.searchPoiInfo, keywordString)
                             }
                         }
                     }

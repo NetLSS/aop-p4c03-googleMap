@@ -10,6 +10,8 @@ import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
 class SearchRecyclerAdapter : RecyclerView.Adapter<SearchRecyclerAdapter.SearchResultViewHolder>() {
 
     private var searchResultList: List<SearchResultEntity> = listOf()
+    var currentPage = 1
+    var currentSearchString = ""
 
     private lateinit var searchResultClickListener: (SearchResultEntity) -> Unit
 
@@ -52,9 +54,13 @@ class SearchRecyclerAdapter : RecyclerView.Adapter<SearchRecyclerAdapter.SearchR
         searchResultList: List<SearchResultEntity>,
         searchResultClickListener: (SearchResultEntity) -> Unit
     ) {
-        this.searchResultList = searchResultList
+        this.searchResultList = this.searchResultList + searchResultList
         this.searchResultClickListener = searchResultClickListener
         notifyDataSetChanged()
+    }
+
+    fun clearList(){
+        searchResultList = listOf()
     }
 
 
