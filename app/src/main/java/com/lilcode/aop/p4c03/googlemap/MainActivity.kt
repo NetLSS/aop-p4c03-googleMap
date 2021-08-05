@@ -130,6 +130,8 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         // 비동기 처리
         launch(coroutineContext) {
             try {
+                binding.progressCircular.isVisible = true // 로딩 표시
+
                 // IO 스레드 사용
                 withContext(Dispatchers.IO) {
                     val response = RetrofitUtil.apiService.getSearchLocation(
@@ -147,8 +149,12 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                     }
                 }
             } catch (e: Exception) {
-                e.printStackTrace() // Permission denied (missing INTERNET permission?) 인터넷 권한 필요
+                e.printStackTrace()
+                // error 해결 방법
+                // Permission denied (missing INTERNET permission?) 인터넷 권한 필요
                 // 또는 앱 삭제 후 재설치
+            } finally {
+                binding.progressCircular.isVisible = false // 로딩 표시 완료
             }
         }
     }
