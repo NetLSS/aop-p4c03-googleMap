@@ -34,6 +34,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     lateinit var binding: ActivityMainBinding
     lateinit var adapter: SearchRecyclerAdapter
 
+    // 키보드 가릴 때 사용
+    lateinit var inputMethodManager: InputMethodManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -55,6 +58,9 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
     private fun bindViews() = with(binding) {
         searchButton.setOnClickListener {
             searchKeyword(searchBarInputView.text.toString())
+
+            // 키보드 숨기기
+            hideKeyboard()
         }
 
         searchBarInputView.setOnKeyListener { v, keyCode, event ->
@@ -63,14 +69,20 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                     searchKeyword(searchBarInputView.text.toString())
 
                     // 키보드 숨기기
-                    val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-                    imm.hideSoftInputFromWindow(searchBarInputView.windowToken, 0)
+                    hideKeyboard()
 
                     return@setOnKeyListener true
                 }
             }
             return@setOnKeyListener false
         }
+    }
+
+    private fun hideKeyboard() {
+        if(::inputMethodManager.isInitialized.not()){
+            inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        }
+        inputMethodManager.hideSoftInputFromWindow(binding.searchBarInputView.windowToken, 0)
     }
 
     /*
