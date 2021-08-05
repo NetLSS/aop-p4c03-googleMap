@@ -13,6 +13,8 @@
         android:hint="@string/please_input_search_keyword"
         app:layout_constraintEnd_toStartOf="@+id/search_button"
         app:layout_constraintStart_toStartOf="parent"
+        android:maxLines="1"
+        android:inputType="text"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
