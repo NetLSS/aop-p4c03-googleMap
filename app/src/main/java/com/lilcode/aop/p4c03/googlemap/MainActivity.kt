@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import androidx.core.view.isVisible
+import com.lilcode.aop.p4c03.googlemap.MapActivity.Companion.SEARCH_RESULT_EXTRA_KEY
 import com.lilcode.aop.p4c03.googlemap.databinding.ActivityMainBinding
 import com.lilcode.aop.p4c03.googlemap.model.LocationLatLngEntity
 import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
@@ -83,7 +84,11 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 Toast.LENGTH_SHORT
             )
                 .show()
-            startActivity(Intent(this, MapActivity::class.java))
+
+            // map 액티비티 시작
+            startActivity(Intent(this, MapActivity::class.java).apply {
+                putExtra(SEARCH_RESULT_EXTRA_KEY, it)
+            })
         }
     }
 
