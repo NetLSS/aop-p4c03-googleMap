@@ -8,6 +8,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
@@ -22,9 +23,18 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.lilcode.aop.p4c03.googlemap.databinding.ActivityMapBinding
 import com.lilcode.aop.p4c03.googlemap.model.LocationLatLngEntity
 import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
+import com.lilcode.aop.p4c03.googlemap.utility.RetrofitUtil
+import kotlinx.coroutines.*
 import java.lang.Exception
+import kotlin.coroutines.CoroutineContext
 
-class MapActivity : AppCompatActivity(), OnMapReadyCallback {
+class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
+
+    private lateinit var job: Job
+
+    override val coroutineContext: CoroutineContext
+        get() = Dispatchers.Main + job
+
 
     private lateinit var binding: ActivityMapBinding
     private lateinit var map: GoogleMap
@@ -47,6 +57,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
 
         binding = ActivityMapBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        job = Job()
 
         if (::searchResult.isInitialized.not()) {
             intent?.let {
@@ -171,6 +183,50 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback {
                 locationLatLngEntity.latitude.toDouble(),
                 locationLatLngEntity.longitude.toDouble()
         ), CAMERA_ZOOM_LEVEL))
+
+        loadReverseGeoInformation(locationLatLngEntity)
+        removeLocationListener() // 위치 불러온 경우 더이상 리스너가 필요 없으므로 제거
+    }
+
+    private fun loadReverseGeoInformation(locationLatLngEntity: LocationLatLngEntity) {
+        // 코루틴 사용
+        launch(coroutineContext) {
+            try {
+                // IO 스레드에서 위치 정보를 받아옴
+                withContext(Dispatchers.IO) {
+                    val response = RetrofitUtil.apiService.getReverseGeoCode(
+                        lat =  locationLatLngEntity.latitude.toDouble(),
+                        lon = locationLatLngEntity.longitude.toDouble()
+                    )
+                    if (response.isSuccessful) {
+                        val body = response.body()
+
+                        // 응답 성공한 경우 UI 스레드에서 처리
+                        withContext(Dispatchers.Main) {
+                            Log.e("list", body.toString())
+                            body?.let {
+                               currentSelectMarker = setupMarker(SearchResultEntity(
+                                    fullAddress = it.addressInfo.fullAddress ?: "주소 정보 없음",
+                                    name ="내 위치",
+                                    locationLatLng = locationLatLngEntity
+                                ))
+                                // 마커 보여주기
+                                currentSelectMarker?.showInfoWindow()
+                            }
+                        }
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Toast.makeText(this@MapActivity, "검색하는 과정에서 에러가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun removeLocationListener() {
+        if (::locationManager.isInitialized && ::myLocationListener.isInitialized) {
+            locationManager.removeUpdates(myLocationListener) // myLocationListener 를 업데이트 대상에서 지워줌
+        }
     }
 
     // 권한 요청 결과 처리
