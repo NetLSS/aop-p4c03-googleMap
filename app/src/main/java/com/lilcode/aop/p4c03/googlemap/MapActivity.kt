@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.isVisible
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -74,6 +75,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
     private fun bindViews() = with(binding) {
         // 현재 위치 버튼 리스너
         currentLocationButton.setOnClickListener {
+            binding.progressCircular.isVisible = true
             getMyLocation()
         }
     }
@@ -151,7 +153,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
 
     @SuppressLint("MissingPermission")
     private fun setMyLocationListener() {
-        val minTime = 1500L // 현재 위치를 불러오는데 기다릴 최소 시간
+        val minTime = 3000L // 현재 위치를 불러오는데 기다릴 최소 시간
         val minDistance = 100f // 최소 거리 허용
 
         // 로케이션 리스너 초기화
@@ -168,7 +170,7 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
                 myLocationListener
             )
             requestLocationUpdates(
-                LocationManager.GPS_PROVIDER,
+                LocationManager.NETWORK_PROVIDER,
                 minTime,
                 minDistance,
                 myLocationListener
@@ -194,6 +196,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         // 코루틴 사용
         launch(coroutineContext) {
             try {
+                binding.progressCircular.isVisible = true
+
                 // IO 스레드에서 위치 정보를 받아옴
                 withContext(Dispatchers.IO) {
                     val response = RetrofitUtil.apiService.getReverseGeoCode(
@@ -223,6 +227,8 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
             } catch (e: Exception) {
                 e.printStackTrace()
                 Toast.makeText(this@MapActivity, "검색하는 과정에서 에러가 발생했습니다.", Toast.LENGTH_SHORT).show()
+            } finally {
+                binding.progressCircular.isVisible = false
             }
         }
     }
