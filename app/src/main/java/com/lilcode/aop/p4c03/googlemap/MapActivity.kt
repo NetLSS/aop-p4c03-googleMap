@@ -10,6 +10,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,7 +27,6 @@ import com.lilcode.aop.p4c03.googlemap.model.LocationLatLngEntity
 import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
 import com.lilcode.aop.p4c03.googlemap.utility.RetrofitUtil
 import kotlinx.coroutines.*
-import java.lang.Exception
 import kotlin.coroutines.CoroutineContext
 
 class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
@@ -127,28 +127,41 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
         // GPS 이용 가능한지
         val isGpsEnable = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
-        // 권한 얻기 // TODO: 교육욕 팝업
+        // 권한 얻기
         if (isGpsEnable) {
-            if (ContextCompat.checkSelfPermission(
+            when {
+                shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_FINE_LOCATION) && shouldShowRequestPermissionRationale(
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) -> {
+                    showPermissionContextPop()
+                }
+
+                ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
                 ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) { // 권한이 부여되지 않은 경우
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ),
-                    PERMISSION_REQUEST_CODE
-                )
-            } else {
-                setMyLocationListener()
+                ) != PackageManager.PERMISSION_GRANTED -> {
+                    makeRequestAsync()
+                }
+
+                else -> {
+                    setMyLocationListener()
+                }
             }
         }
+    }
+
+    private fun showPermissionContextPop() {
+        AlertDialog.Builder(this)
+            .setTitle("권한이 필요합니다.")
+            .setMessage("내 위치를 불러오기위해 권한이 필요합니다.")
+            .setPositiveButton("동의") { _, _ ->
+                makeRequestAsync()
+            }
+            .create()
+            .show()
     }
 
     @SuppressLint("MissingPermission")
@@ -252,9 +265,22 @@ class MapActivity : AppCompatActivity(), OnMapReadyCallback, CoroutineScope {
                     setMyLocationListener()
                 } else {
                     Toast.makeText(this, "권한을 받지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    binding.progressCircular.isVisible = false
                 }
             }
         }
+    }
+
+    private fun makeRequestAsync() {
+        // 퍼미션 요청 작업. 아래 작업은 비동기로 이루어짐
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
+            PERMISSION_REQUEST_CODE
+        )
     }
 
     inner class MyLocationListener : LocationListener {
