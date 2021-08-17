@@ -2,27 +2,26 @@ package com.lilcode.aop.p4c03.googlemap
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.lilcode.aop.p4c03.googlemap.MapActivity.Companion.SEARCH_RESULT_EXTRA_KEY
 import com.lilcode.aop.p4c03.googlemap.databinding.ActivityMainBinding
 import com.lilcode.aop.p4c03.googlemap.model.LocationLatLngEntity
 import com.lilcode.aop.p4c03.googlemap.model.SearchResultEntity
 import com.lilcode.aop.p4c03.googlemap.response.search.Poi
 import com.lilcode.aop.p4c03.googlemap.response.search.Pois
+import com.lilcode.aop.p4c03.googlemap.response.search.SearchPoiInfo
 import com.lilcode.aop.p4c03.googlemap.utility.RetrofitUtil
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
-
-import android.view.inputmethod.InputMethodManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.lilcode.aop.p4c03.googlemap.response.search.SearchPoiInfo
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 class MainActivity : AppCompatActivity(), CoroutineScope {
@@ -96,6 +95,7 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
         emptyResultTextView.isVisible = false
         recyclerView.adapter = adapter
 
+        // 무한 스크롤 기능 구현
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -108,7 +108,6 @@ class MainActivity : AppCompatActivity(), CoroutineScope {
                 // 페이지 끝에 도달한 경우
                 if (!recyclerView.canScrollVertically(1) && lastVisibleItemPosition == totalItemCount) {
                     loadNext()
-
                 }
             }
         })
